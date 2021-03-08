@@ -5,12 +5,20 @@ using UnityEngine;
 public class PlayerMove : MonoBehaviour
 {
     public CharacterController controller;
+    public Rigidbody rb;
+
+    private bool doSlowMo = false;
 
     public float Speed = 6f;
     public float Gravity = -9.81f;
     bool grounded;
     Vector3 velocity;
     float jump = 3f;
+
+    private void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+    }
 
     void Update()
     {
@@ -36,6 +44,38 @@ public class PlayerMove : MonoBehaviour
             velocity.y += Mathf.Sqrt(jump * -3.0f * Gravity);
         }
 
-        
+        SlowMo();
+
+
+    }
+
+    void SlowMo()
+    {
+        float playerVelocity = rb.velocity.magnitude;
+        Debug.Log(Time.timeScale);
+        Debug.Log(doSlowMo);
+        Debug.Log(playerVelocity);
+        if (playerVelocity > 0)
+        {
+            if (doSlowMo)
+            {
+                
+                
+                Time.timeScale = 1f;
+                Time.fixedDeltaTime = 0.02f * Time.timeScale;
+                doSlowMo = false;
+
+            }
+        }
+        else
+        {
+            if (!doSlowMo)
+            {
+                Time.timeScale = 0.1f;
+                Time.fixedDeltaTime = 0.02f * Time.timeScale;
+                doSlowMo = true;
+
+            }
+        }
     }
 }

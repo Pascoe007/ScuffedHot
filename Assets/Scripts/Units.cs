@@ -22,7 +22,7 @@ public class Units : MonoBehaviour
     void RunPath()
     {
         fow.FindVisiableWeapons();
-        Debug.Log(hasWeapon);
+        
         Transform tMin = null;
         float minDist = Mathf.Infinity;
         Vector3 currentPos = transform.position;
@@ -41,7 +41,7 @@ public class Units : MonoBehaviour
     void Test(Vector3 currentPos, float minDist, Transform tMin)
     {
         float playerDist = Vector3.Distance(target.position, currentPos);
-        Debug.Log("PlayerDis " + playerDist);
+        
         if (minDist < playerDist && !hasWeapon)
         {
             if (pathDone)
@@ -56,10 +56,9 @@ public class Units : MonoBehaviour
             if (playerDist <= 11)
             {
                 Vector3 playerAngle = (target.position - transform.position).normalized;
-                Debug.Log("Player Angle " + playerAngle);
+                
                 if (!Physics.Raycast(transform.position, playerAngle, fow.dstToPlayer, fow.wallMask))
                 {
-                    Debug.Log("no move");
                     StopCoroutine("FollowPath");
                 }
                 
@@ -110,6 +109,7 @@ public class Units : MonoBehaviour
             }
 
             transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime);
+            transform.LookAt(currentWaypoint);
             yield return null;
 
         }
