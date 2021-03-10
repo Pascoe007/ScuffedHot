@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerMove : MonoBehaviour
 {
     public CharacterController controller;
-    public Rigidbody rb;
+    //public Rigidbody rb;
 
     private bool doSlowMo = false;
 
@@ -17,7 +17,7 @@ public class PlayerMove : MonoBehaviour
 
     private void Start()
     {
-        rb = GetComponent<Rigidbody>();
+        //rb = GetComponent<Rigidbody>();
     }
 
     void Update()
@@ -44,14 +44,14 @@ public class PlayerMove : MonoBehaviour
             velocity.y += Mathf.Sqrt(jump * -3.0f * Gravity);
         }
 
-        SlowMo();
+        
 
 
     }
 
     void SlowMo()
     {
-        float playerVelocity = rb.velocity.magnitude;
+        float playerVelocity = controller.velocity.magnitude;
         Debug.Log(Time.timeScale);
         Debug.Log(doSlowMo);
         Debug.Log(playerVelocity);

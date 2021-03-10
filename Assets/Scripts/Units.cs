@@ -3,21 +3,36 @@ using System.Collections;
 
 public class Units : MonoBehaviour
 {
+    //public CharacterController controller;
+    Rigidbody rb;
     FieldOfView fow;
     public Transform target;
-    float speed = 10;
+    public float speed = 1;
     Vector3[] path;
+    Vector3 velocity;
     int targetIndex;
     public float repeatRate;
     public bool hasWeapon = false;
     bool pathDone;
+    public float StartTime;
 
 
     void Start()
     {
         fow = GetComponent<FieldOfView>();
+        rb = GetComponent<Rigidbody>();
         InvokeRepeating("RunPath", 0.5f, repeatRate);
+        StartTime = Time.time;
 
+    }
+    void tUpdate()
+    {
+        //velocity.y += -9.81f * Time.deltaTime;
+        //controller.Move(velocity * Time.deltaTime);
+        //if (controller.isGrounded)
+        {
+            //Debug.Log("Grounded");
+        }
     }
     void RunPath()
     {
@@ -35,7 +50,9 @@ public class Units : MonoBehaviour
                 minDist = dist;
             }
         }
+        
         Test(currentPos, minDist, tMin);
+        
     }
 
     void Test(Vector3 currentPos, float minDist, Transform tMin)
@@ -44,8 +61,10 @@ public class Units : MonoBehaviour
         
         if (minDist < playerDist && !hasWeapon)
         {
+            
             if (pathDone)
             {
+                
                 hasWeapon = true;
                 return;
             }
@@ -94,11 +113,17 @@ public class Units : MonoBehaviour
 
     IEnumerator FollowPath()
     {
+        
         Vector3 currentWaypoint = path[0];
+        
+        
         while (true)
         {
-            if (transform.position == currentWaypoint)
+            float dst = Vector3.Distance(transform.position, currentWaypoint);
+            Debug.Log("dst" + dst);
+            if (currentWaypoint == transform.position)
             {
+                
                 pathDone = true;
                 targetIndex++;
                 if (targetIndex >= path.Length)
@@ -108,8 +133,17 @@ public class Units : MonoBehaviour
                 currentWaypoint = path[targetIndex];
             }
 
-            transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime);
-            transform.LookAt(currentWaypoint);
+            //transform.position = Vector2.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime);
+            //controller.Move(Vector3.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime));
+
+            
+
+            rb.MovePosition(Vector3.Lerp(transform.position, currentWaypoint, ((Time.deltaTime - StartTime)*speed)/Vector3.Distance(transform.position, currentWaypoint)));
+
+            
+            //transform.LookAt(currentWaypoint);
+
+
             yield return null;
 
         }
