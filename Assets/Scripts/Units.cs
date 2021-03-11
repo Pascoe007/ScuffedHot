@@ -6,6 +6,7 @@ public class Units : MonoBehaviour
     //public CharacterController controller;
     Rigidbody rb;
     FieldOfView fow;
+    Grid grid;
     public Transform target;
     public float speed = 1;
     Vector3[] path;
@@ -19,20 +20,20 @@ public class Units : MonoBehaviour
 
     void Start()
     {
+        grid = GetComponent<Grid>();
         fow = GetComponent<FieldOfView>();
         rb = GetComponent<Rigidbody>();
         InvokeRepeating("RunPath", 0.5f, repeatRate);
         StartTime = Time.time;
+        
 
     }
     void tUpdate()
     {
-        //velocity.y += -9.81f * Time.deltaTime;
-        //controller.Move(velocity * Time.deltaTime);
-        //if (controller.isGrounded)
-        {
-            //Debug.Log("Grounded");
-        }
+        velocity.y += -9.81f * Time.deltaTime;
+        rb.MovePosition(velocity * Time.deltaTime);
+        
+        
     }
     void RunPath()
     {
@@ -57,45 +58,57 @@ public class Units : MonoBehaviour
 
     void Test(Vector3 currentPos, float minDist, Transform tMin)
     {
-        float playerDist = Vector3.Distance(target.position, currentPos);
         
-        if (minDist < playerDist && !hasWeapon)
-        {
-            
-            if (pathDone)
-            {
-                
-                hasWeapon = true;
-                return;
-            }
-            PathReqManager.RequestPath(transform.position, tMin.position, OnPathFound);
-        }
-        else if (hasWeapon)
-        {
-            if (playerDist <= 11)
-            {
-                Vector3 playerAngle = (target.position - transform.position).normalized;
-                
-                if (!Physics.Raycast(transform.position, playerAngle, fow.dstToPlayer, fow.wallMask))
-                {
-                    StopCoroutine("FollowPath");
-                }
-                
-            }
-            else if (playerDist > 11)
-            {
-                PathReqManager.RequestPath(transform.position, target.position, OnPathFound);
-                return;
-            }
-            else
-            {
-                PathReqManager.RequestPath(transform.position, target.position, OnPathFound);
-            }
-        }
-        else
+        Debug.Log(tMin);
+        float playerDist = Vector3.Distance(target.position, currentPos);
+        while (tMin == null)
         {
             PathReqManager.RequestPath(transform.position, target.position, OnPathFound);
+            break;
         }
+        while(tMin != null)
+        {
+            while (!hasWeapon)
+            {
+                if (playerDist < Vector3.Distance(transform.position, tMin.transform.position))
+                {
+                    PathReqManager.RequestPath(transform.position, target.position, OnPathFound);
+                    
+                }
+                else
+                {
+                    PathReqManager.RequestPath(transform.position, tMin.position, OnPathFound);
+                    if(Vector3.Distance(transform.position, tMin.transform.position) < 5 && !hasWeapon)
+                    {
+                        hasWeapon = true;
+                        break;
+                    }
+                }
+                
+                
+                break;
+            }
+            while (hasWeapon)
+            {
+                while (Vector3.Distance(transform.position, target.transform.position) < 10)
+                {
+                    StopCoroutine("FollowPath");
+                    break;
+                }
+                if(Vector3.Distance(transform.position, target.transform.position) > 10)
+                {
+                    PathReqManager.RequestPath(transform.position, target.position, OnPathFound);
+                    break;
+                }
+                break;
+            }
+            break;
+        }
+        
+
+        
+            
+        
     }
 
 
@@ -120,28 +133,30 @@ public class Units : MonoBehaviour
         while (true)
         {
             float dst = Vector3.Distance(transform.position, currentWaypoint);
-            Debug.Log("dst" + dst);
-            if (currentWaypoint == transform.position)
+            //Debug.Log("dst" + dst);
+            if (transform.position == currentWaypoint)
             {
-                
+                Debug.Log("hello");
                 pathDone = true;
                 targetIndex++;
-                if (targetIndex >= path.Length)
+                if (targetIndex <= path.Length)
                 {
+                    
                     yield break;
                 }
                 currentWaypoint = path[targetIndex];
             }
-
-            //transform.position = Vector2.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime);
+            currentWaypoint.y = transform.position.y;
+            transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime);
             //controller.Move(Vector3.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime));
 
             
 
-            rb.MovePosition(Vector3.Lerp(transform.position, currentWaypoint, ((Time.deltaTime - StartTime)*speed)/Vector3.Distance(transform.position, currentWaypoint)));
+            //rb.MovePosition(Vector3.Lerp(transform.position, currentWaypoint, ((Time.deltaTime - StartTime)*speed)/Vector3.Distance(transform.position, currentWaypoint)));
 
             
-            //transform.LookAt(currentWaypoint);
+             
+            transform.LookAt(currentWaypoint);
 
 
             yield return null;
