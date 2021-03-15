@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Units : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class Units : MonoBehaviour
     public bool hasWeapon = false;
     bool pathDone;
     public float StartTime;
+    
 
 
     void Start()
@@ -52,11 +54,11 @@ public class Units : MonoBehaviour
             }
         }
         
-        Test(currentPos, minDist, tMin);
+        ChoosePath(currentPos, minDist, tMin);
         
     }
 
-    void Test(Vector3 currentPos, float minDist, Transform tMin)
+    void ChoosePath(Vector3 currentPos, float minDist, Transform tMin)
     {
         
         Debug.Log(tMin);
@@ -184,4 +186,6 @@ public class Units : MonoBehaviour
             }
         }
     }
+
+    
 }

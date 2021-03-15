@@ -5,29 +5,29 @@ using System;
 public class Heap<T> where T : IHeapItem<T>
 {
 
-	T[] items;
-	int currentItemCount;
+	T[] binaryHeap;
+	int ItemCount;
 
 	public Heap(int maxHeapSize)
 	{
-		items = new T[maxHeapSize];
+		binaryHeap = new T[maxHeapSize];
 	}
 
 	public void Add(T item)
 	{
-		item.HeapIndex = currentItemCount;
-		items[currentItemCount] = item;
+		item.HeapIndex = ItemCount;
+		binaryHeap[ItemCount] = item;
 		SortUp(item);
-		currentItemCount++;
+		ItemCount++;
 	}
 
 	public T RemoveFirst()
 	{
-		T firstItem = items[0];
-		currentItemCount--;
-		items[0] = items[currentItemCount];
-		items[0].HeapIndex = 0;
-		SortDown(items[0]);
+		T firstItem = binaryHeap[0];
+		ItemCount--;
+		binaryHeap[0] = binaryHeap[ItemCount];
+		binaryHeap[0].HeapIndex = 0;
+		SortDown(binaryHeap[0]);
 		return firstItem;
 	}
 
@@ -40,38 +40,38 @@ public class Heap<T> where T : IHeapItem<T>
 	{
 		get
 		{
-			return currentItemCount;
+			return ItemCount;
 		}
 	}
 
 	public bool Contains(T item)
 	{
-		return Equals(items[item.HeapIndex], item);
+		return Equals(binaryHeap[item.HeapIndex], item);
 	}
 
 	void SortDown(T item)
 	{
 		while (true)
 		{
-			int childIndexLeft = item.HeapIndex * 2 + 1;
-			int childIndexRight = item.HeapIndex * 2 + 2;
+			int IndexLeft = item.HeapIndex * 2 + 1;
+			int IndexRight = item.HeapIndex * 2 + 2;
 			int swapIndex = 0;
 
-			if (childIndexLeft < currentItemCount)
+			if (IndexLeft < ItemCount)
 			{
-				swapIndex = childIndexLeft;
+				swapIndex = IndexLeft;
 
-				if (childIndexRight < currentItemCount)
+				if (IndexRight < ItemCount)
 				{
-					if (items[childIndexLeft].CompareTo(items[childIndexRight]) < 0)
+					if (binaryHeap[IndexLeft].CompareTo(binaryHeap[IndexRight]) < 0)
 					{
-						swapIndex = childIndexRight;
+						swapIndex = IndexRight;
 					}
 				}
 
-				if (item.CompareTo(items[swapIndex]) < 0)
+				if (item.CompareTo(binaryHeap[swapIndex]) < 0)
 				{
-					Swap(item, items[swapIndex]);
+					Swap(item, binaryHeap[swapIndex]);
 				}
 				else
 				{
@@ -93,7 +93,7 @@ public class Heap<T> where T : IHeapItem<T>
 
 		while (true)
 		{
-			T parentItem = items[parentIndex];
+			T parentItem = binaryHeap[parentIndex];
 			if (item.CompareTo(parentItem) > 0)
 			{
 				Swap(item, parentItem);
@@ -109,8 +109,8 @@ public class Heap<T> where T : IHeapItem<T>
 
 	void Swap(T itemA, T itemB)
 	{
-		items[itemA.HeapIndex] = itemB;
-		items[itemB.HeapIndex] = itemA;
+		binaryHeap[itemA.HeapIndex] = itemB;
+		binaryHeap[itemB.HeapIndex] = itemA;
 		int itemAIndex = itemA.HeapIndex;
 		itemA.HeapIndex = itemB.HeapIndex;
 		itemB.HeapIndex = itemAIndex;
