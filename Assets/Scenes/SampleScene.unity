@@ -8636,12 +8636,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20cad5c931f62834aa854530c1e85ca9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  displayGridGizmos: 1
+  displayGridGizmos: 0
   unwalkableMask:
     serializedVersion: 2
     m_Bits: 49152
   gridWorldSize: {x: 100, y: 100}
-  nodeRadius: 0.1
+  nodeRadius: 0.5
   walkableRegions:
   - terrianMask:
       serializedVersion: 2
