@@ -8646,11 +8646,11 @@ MonoBehaviour:
   - terrianMask:
       serializedVersion: 2
       m_Bits: 8192
-    terrianPently: 100
+    terrianPently: 5
   - terrianMask:
       serializedVersion: 2
       m_Bits: 2048
-    terrianPently: 5
+    terrianPently: 0
   - terrianMask:
       serializedVersion: 2
       m_Bits: 4096
@@ -8658,11 +8658,11 @@ MonoBehaviour:
   - terrianMask:
       serializedVersion: 2
       m_Bits: 16
-    terrianPently: 20
+    terrianPently: 5
   - terrianMask:
       serializedVersion: 2
       m_Bits: 16384
-    terrianPently: 20
+    terrianPently: 5
 --- !u!4 &2065509472
 Transform:
   m_ObjectHideFlags: 0
