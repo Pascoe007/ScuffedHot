@@ -136,7 +136,7 @@ public class Grid : MonoBehaviour
 
 	public List<Node> GetNeighbours(Node node)
 	{
-		List<Node> neighbours = new List<Node>();
+        List<Node> neighbours = new List<Node>();
 
 		for (int x = -1; x <= 1; x++)
 		{
@@ -159,7 +159,7 @@ public class Grid : MonoBehaviour
 	}
 
 
-	public Node NodeFromWorldPoint(Vector3 worldPosition)
+	public Node NodeFromPos(Vector3 worldPosition)
 	{
 		float percentX = (worldPosition.x + gridWorldSize.x / 2) / gridWorldSize.x;
 		float percentY = (worldPosition.z + gridWorldSize.y / 2) / gridWorldSize.y;

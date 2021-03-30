@@ -5,117 +5,125 @@ using System;
 
 public class Pathfinding : MonoBehaviour
 {
+    Grid grid;
+    PathReqManager manager;
 
-	PathReqManager requestManager;
-	Grid grid;
+    private void Awake()
+    {
+        grid = GetComponent<Grid>();
+        manager = GetComponent<PathReqManager>();
+    }
 
-	void Awake()
-	{
-		requestManager = GetComponent<PathReqManager>();
-		grid = GetComponent<Grid>();
-	}
+    public void StartPathFinding(Vector3 sPos, Vector3 tPos)
+    {
+        StartCoroutine(PathFinding(sPos, tPos));
+    }
+
+    Vector3[] RetracePath(Node _sNode, Node eNode)
+    {
+        List<Node> _path = new List<Node>();
+        Node _cNode = eNode;
+        while(_cNode != _sNode)
+        {
+            
+            _path.Add(_cNode);
+            _cNode = _cNode.parent;
+        }
+        Vector3[] finalPath = Simlify(_path);
+        Array.Reverse(finalPath);
+        return finalPath;
+    }
 
 
-	public void StartFindPath(Vector3 startPos, Vector3 targetPos)
-	{
-		StartCoroutine(FindPath(startPos, targetPos));
-	}
+    Vector3[] Simlify(List<Node> _path)
+    {
+        List<Vector3> pathPoints = new List<Vector3>();
+        Vector2 oldDir = Vector2.zero;
 
-	IEnumerator FindPath(Vector3 startPos, Vector3 targetPos)
-	{
+        for (int i = 1; i < _path.Count; i++)
+        {
+            Vector2 newDir = new Vector2(_path[i - 1].gridX - _path[i].gridX, _path[i - 1].gridY - _path[i].gridY);
+            if (oldDir != newDir)
+            {
+                pathPoints.Add(_path[i].worldPosition);
+            }
+            oldDir = newDir;
+        }
+        return pathPoints.ToArray();
+    }
 
-		Vector3[] waypoints = new Vector3[0];
-		bool pathSuccess = false;
 
-		Node startNode = grid.NodeFromWorldPoint(startPos);
-		Node targetNode = grid.NodeFromWorldPoint(targetPos);
+    int Distance(Node a, Node b)
+    {
+        int dx = Mathf.Abs(a.gridX - b.gridX);
+        int dy = Mathf.Abs(a.gridY - b.gridY);
+
+        if (dx > dy)
+            return 14 * dy + 10 * (dx - dy);
+        return 14 * dx + 10 * (dy - dx);
+    }
+
+    IEnumerator PathFinding(Vector3 _sPos, Vector3 _tPos)
+    {
+
+        bool pathSuccess = false;
+        Vector3[] path = new Vector3[0];
+
+        Node sNode = grid.NodeFromPos(_sPos);
+        Node tNode = grid.NodeFromPos(_tPos);
+
+        sNode.parent = sNode;
+
+        if (sNode.walkable && tNode.walkable)
+        {
+
+            Heap<Node> openHeap = new Heap<Node>(grid.MaxSize);
+            HashSet<Node> closedHashSet = new HashSet<Node>();
+
+            openHeap.Add(sNode);
+
+            while (openHeap.Count > 0)
+            {
+
+                Node cNode = openHeap.RemoveFirst();
+                closedHashSet.Add(cNode);
 
 
-		if (startNode.walkable && targetNode.walkable)
-		{
-			Heap<Node> openSet = new Heap<Node>(grid.MaxSize);
-			HashSet<Node> closedSet = new HashSet<Node>();
-			openSet.Add(startNode);
+                if (cNode == tNode)
+                {
+                    pathSuccess = true;
+                    break;
+                }
+                foreach (Node n in grid.GetNeighbours(cNode))
+                {
+                    if (closedHashSet.Contains(n) || !n.walkable)
+                    {
+                        continue;
+                    }
+                    int costToN = cNode.gCost + Distance(cNode, n) * n.movementPenalty;
 
-			while (openSet.Count > 0)
-			{
-				Node currentNode = openSet.RemoveFirst();
-				closedSet.Add(currentNode);
+                    if (!openHeap.Contains(n) || n.gCost > costToN)
+                    {
+                        n.gCost = costToN;
+                        n.hCost = Distance(n, tNode);
+                        n.parent = cNode;
 
-				if (currentNode == targetNode)
-				{
-					pathSuccess = true;
-					break;
-				}
+                        if (!openHeap.Contains(n))
+                        {
+                            openHeap.Add(n);
+                        }
+                    }
+                }
+            }
+        }
 
-				foreach (Node neighbour in grid.GetNeighbours(currentNode))
-				{
-					if (!neighbour.walkable || closedSet.Contains(neighbour))
-					{
-						continue;
-					}
+        yield return null;
+        if (pathSuccess)
+        {
+            path = RetracePath(sNode, tNode);
+            pathSuccess = path.Length > 0;
+        }
+        manager.FinishedProcessingPath(path, pathSuccess);
+    }
 
-					int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour) * neighbour.movementPenalty;
-					if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
-					{
-						neighbour.gCost = newMovementCostToNeighbour;
-						neighbour.hCost = GetDistance(neighbour, targetNode);
-						neighbour.parent = currentNode;
-
-						if (!openSet.Contains(neighbour))
-							openSet.Add(neighbour);
-					}
-				}
-			}
-		}
-		yield return null;
-		if (pathSuccess)
-		{
-			waypoints = RetracePath(startNode, targetNode);
-			pathSuccess = waypoints.Length > 0;
-		}
-		requestManager.FinishedProcessingPath(waypoints, pathSuccess);
-
-	}
-
-	Vector3[] RetracePath(Node startNode, Node endNode)
-	{
-		List<Node> path = new List<Node>();
-		Node currentNode = endNode;
-
-		while (currentNode != startNode)
-		{
-			path.Add(currentNode);
-			currentNode = currentNode.parent;
-		}
-		Vector3[] waypoints = SimplifyPath(path);
-		Array.Reverse(waypoints);
-		return waypoints;
-
-	}
-
-	Vector3[] SimplifyPath(List<Node> path)
-	{
-		List<Vector3> waypoints = new List<Vector3>();
-		Vector2 directionOld = Vector2.zero;
-
-		for (int i = 1; i < path.Count; i++)
-		{
-			Vector2 directionNew = new Vector2(path[i - 1].gridX - path[i].gridX, path[i - 1].gridY - path[i].gridY);
-			if (directionNew != directionOld)
-			{
-				waypoints.Add(path[i].worldPosition);
-			}
-			directionOld = directionNew;
-		}
-		return waypoints.ToArray();
-	}
-
-	int GetDistance(Node nodeA, Node nodeB)
-	{
-		int dx = Mathf.Abs(nodeA.gridX - nodeB.gridX);
-		int dy = Mathf.Abs(nodeA.gridY - nodeB.gridY);
-		
-		return 14 * (dx + dy);
-	}
 }

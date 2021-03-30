@@ -5,7 +5,7 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class FenceLayout : MonoBehaviour
 {
-	public List<Vector3> FencePoints = new List<Vector3>();
+	public System.Collections.Generic.List<Vector3> FencePoints = new System.Collections.Generic.List<Vector3>();
 	public Transform[] FencePrefabs = new Transform[1];
 	public Transform PostPrefab;
 	public Vector3 FenceEndOffset = new Vector3();
