@@ -5,11 +5,13 @@ using System.Collections.Generic;
 public class Grid : MonoBehaviour
 {
     public bool displayGizmos;
-    public LayerMask unWalkable;
+    
     public Vector2 worldSize;
     public float nodeRadius;
     public float nodeDiameter;
-    public Terrain[] walkable;
+
+	public LayerMask unWalkable;
+	public Terrain[] walkable;
     LayerMask walkableMask;
     Dictionary<int, int> walkableDictionary = new Dictionary<int, int>();
     
