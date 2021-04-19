@@ -74,9 +74,7 @@ public class Grid : MonoBehaviour
 		foreach (Terrain T in walkable)
 		{
 			walkableMask.value |= T.terrian.value;
-
 			walkableDictionary.Add((int)Mathf.Log(T.terrian.value, 2), T.tPently);
-
 		}
 		CreateGrid();
 	}
