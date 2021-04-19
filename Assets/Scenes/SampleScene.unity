@@ -8636,33 +8636,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20cad5c931f62834aa854530c1e85ca9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  displayGridGizmos: 1
-  unwalkableMask:
-    serializedVersion: 2
-    m_Bits: 49152
-  gridWorldSize: {x: 100, y: 100}
+  displayGizmos: 0
+  worldSize: {x: 100, y: 100}
   nodeRadius: 0.5
-  walkableRegions:
-  - terrianMask:
-      serializedVersion: 2
-      m_Bits: 8192
-    terrianPently: 5
-  - terrianMask:
-      serializedVersion: 2
-      m_Bits: 2048
-    terrianPently: 0
-  - terrianMask:
+  nodeDiameter: 0
+  unWalkable:
+    serializedVersion: 2
+    m_Bits: 0
+  walkable:
+  - terrian:
       serializedVersion: 2
       m_Bits: 4096
-    terrianPently: 0
-  - terrianMask:
+    tPently: 0
+  - terrian:
+      serializedVersion: 2
+      m_Bits: 2048
+    tPently: 1
+  - terrian:
+      serializedVersion: 2
+      m_Bits: 8192
+    tPently: 5
+  - terrian:
       serializedVersion: 2
       m_Bits: 16
-    terrianPently: 5
-  - terrianMask:
+    tPently: 10
+  - terrian:
       serializedVersion: 2
-      m_Bits: 16384
-    terrianPently: 5
+      m_Bits: 49152
+    tPently: 100
 --- !u!4 &2065509472
 Transform:
   m_ObjectHideFlags: 0
