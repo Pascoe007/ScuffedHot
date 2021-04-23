@@ -11,7 +11,7 @@ public class PlayerMove : MonoBehaviour
 
     public float Speed = 6f;
     public float Gravity = -9.81f;
-    bool grounded;
+    public bool grounded;
     Vector3 velocity;
     float jump = 3f;
 
