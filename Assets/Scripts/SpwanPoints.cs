@@ -7,25 +7,25 @@ public class SpwanPoints : MonoBehaviour
     public GameObject Enmey;
     public int xPos;
     public int zPos;
-    public int enmeyCount;
+    public int enmeyCount = 0;
 
-    void Start()
+    private void Awake()
     {
-        StartCoroutine(EmemySpwan());
+        InvokeRepeating("EmemySpwan", 0, 0.1f);
     }
-    public void DecreasedCount()
+
+    
+    void EmemySpwan()
     {
-        enmeyCount--;
-    }
-    IEnumerator EmemySpwan()
-    {
-        while(enmeyCount< 10)
+        while (enmeyCount < 3)
         {
             xPos = Random.Range(-50, 50);
             zPos = Random.Range(-50, 50);
             Instantiate(Enmey, new Vector3(xPos, 0, zPos), Quaternion.identity);
-            yield return new WaitForSeconds(0.1f);
             enmeyCount += 1;
+            Debug.Log(enmeyCount);
         }
+        
+
     }
 }

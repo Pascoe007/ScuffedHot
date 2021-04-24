@@ -8,7 +8,7 @@ public class Units : MonoBehaviour
     Rigidbody rb;
     FieldOfView fow;
     Grid grid;
-    SpwanPoints sp;
+    public SpwanPoints spwanPoint;
     public Transform target;
     public float speed = 1;
     Vector3[] path;
@@ -23,23 +23,18 @@ public class Units : MonoBehaviour
 
     void Start()
     {
+        
         grid = GetComponent<Grid>();
         fow = GetComponent<FieldOfView>();
         rb = GetComponent<Rigidbody>();
-        sp = GetComponent<SpwanPoints>();
+        
         InvokeRepeating("RunPath", 0.5f, repeatRate);
         SetKinematic(true);
 
-
+        
 
     }
-    void tUpdate()
-    {
-        velocity.y += -9.81f * Time.deltaTime;
-        rb.MovePosition(velocity * Time.deltaTime);
-        
-        
-    }
+   
     void RunPath()
     {
         fow.FindVisiableWeapons();
@@ -64,7 +59,7 @@ public class Units : MonoBehaviour
     void ChoosePath(Vector3 currentPos, float minDist, Transform tMin)
     {
         
-        Debug.Log(tMin);
+        
         float playerDist = Vector3.Distance(target.position, currentPos);
         while (tMin == null)
         {
@@ -141,7 +136,7 @@ public class Units : MonoBehaviour
             //Debug.Log("dst" + dst);
             if (transform.position == currentWaypoint)
             {
-                Debug.Log("hello");
+                
                 pathDone = true;
                 targetIndex++;
                 if (targetIndex <= path.Length)
@@ -171,7 +166,7 @@ public class Units : MonoBehaviour
 
     public void OnDrawGizmos()
     {
-        /*if (path != null)
+        if (path != null)
         {
             for (int i = targetIndex; i < path.Length; i++)
             {
@@ -187,23 +182,24 @@ public class Units : MonoBehaviour
                     Gizmos.DrawLine(path[i - 1], path[i]);
                 }
             }
-        }*/
+        }
     }
     public void TakeDamage(float amout)
     {
         health -= amout;
         if (health <= 0f)
         {
-            Die();
+            SetKinematic(false);
+            GetComponent<Animator>().enabled = false;
+            Destroy(gameObject, 5);
+            CancelInvoke("RunPath");
+            spwanPoint.enmeyCount--;
         }
     }
     void Die()
     {
-        SetKinematic(false);
-        GetComponent<Animator>().enabled = false;
-        Destroy(gameObject, 10);
-        CancelInvoke("RunPath");
-        sp.DecreasedCount();
+        
+       
     }
     
     void SetKinematic(bool state)
