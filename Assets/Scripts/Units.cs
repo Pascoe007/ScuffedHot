@@ -8,6 +8,7 @@ public class Units : MonoBehaviour
     Rigidbody rb;
     FieldOfView fow;
     Grid grid;
+    SpwanPoints sp;
     public Transform target;
     public float speed = 1;
     Vector3[] path;
@@ -16,8 +17,8 @@ public class Units : MonoBehaviour
     public float repeatRate;
     public bool hasWeapon = false;
     bool pathDone;
-    public float StartTime;
-    
+
+    public float health;
 
 
     void Start()
@@ -25,9 +26,11 @@ public class Units : MonoBehaviour
         grid = GetComponent<Grid>();
         fow = GetComponent<FieldOfView>();
         rb = GetComponent<Rigidbody>();
+        sp = GetComponent<SpwanPoints>();
         InvokeRepeating("RunPath", 0.5f, repeatRate);
-        StartTime = Time.time;
-        
+        SetKinematic(true);
+
+
 
     }
     void tUpdate()
@@ -168,7 +171,7 @@ public class Units : MonoBehaviour
 
     public void OnDrawGizmos()
     {
-        if (path != null)
+        /*if (path != null)
         {
             for (int i = targetIndex; i < path.Length; i++)
             {
@@ -184,8 +187,33 @@ public class Units : MonoBehaviour
                     Gizmos.DrawLine(path[i - 1], path[i]);
                 }
             }
+        }*/
+    }
+    public void TakeDamage(float amout)
+    {
+        health -= amout;
+        if (health <= 0f)
+        {
+            Die();
         }
     }
+    void Die()
+    {
+        SetKinematic(false);
+        GetComponent<Animator>().enabled = false;
+        Destroy(gameObject, 10);
+        CancelInvoke("RunPath");
+        sp.DecreasedCount();
+    }
+    
+    void SetKinematic(bool state)
+    {
+        Rigidbody[] rb = GetComponentsInChildren<Rigidbody>();
 
+        foreach (Rigidbody rigidbody in rb)
+        {
+            rigidbody.isKinematic = state;
+        }
+    }
     
 }
