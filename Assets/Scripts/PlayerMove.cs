@@ -13,7 +13,7 @@ public class PlayerMove : MonoBehaviour
     public float Gravity = -9.81f;
     public bool grounded;
     Vector3 velocity;
-    float jump = 3f;
+    public float jump = 3f;
 
     private void Start()
     {
@@ -44,7 +44,15 @@ public class PlayerMove : MonoBehaviour
             velocity.y += Mathf.Sqrt(jump * -3.0f * Gravity);
         }
 
-        
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            Debug.Log("ChangeSpeed");
+            Speed = 15;
+        }
+        else
+        {
+            Speed = 10;
+        }
 
 
     }
