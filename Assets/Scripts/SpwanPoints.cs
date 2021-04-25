@@ -11,13 +11,15 @@ public class SpwanPoints : MonoBehaviour
 
     private void Awake()
     {
-        InvokeRepeating("EmemySpwan", 0, 0.1f);
+        
     }
-
-    
-    void EmemySpwan()
+    public void LowerCount()
     {
-        while (enmeyCount < 3)
+        
+    }
+    private void Update()
+    {
+        while (enmeyCount < 5)
         {
             xPos = Random.Range(-50, 50);
             zPos = Random.Range(-50, 50);

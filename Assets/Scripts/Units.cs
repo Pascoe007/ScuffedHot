@@ -4,11 +4,13 @@ using System.Collections.Generic;
 
 public class Units : MonoBehaviour
 {
+    public GameObject ball;
+    public Transform m_SpawnTransform;
     //public CharacterController controller;
     Rigidbody rb;
     FieldOfView fow;
     Grid grid;
-    public SpwanPoints spwanPoint;
+    //public SpwanPoints spwanPoint;
     public Transform target;
     public float speed = 1;
     Vector3[] path;
@@ -27,7 +29,7 @@ public class Units : MonoBehaviour
         grid = GetComponent<Grid>();
         fow = GetComponent<FieldOfView>();
         rb = GetComponent<Rigidbody>();
-        
+        //spwanPoint = GetComponent <SpwanPoints>();
         InvokeRepeating("RunPath", 0.5f, repeatRate);
         SetKinematic(true);
 
@@ -37,6 +39,7 @@ public class Units : MonoBehaviour
    
     void RunPath()
     {
+        target = GameObject.Find("Player").transform;
         fow.FindVisiableWeapons();
         
         Transform tMin = null;
@@ -78,8 +81,9 @@ public class Units : MonoBehaviour
                 else
                 {
                     PathReqManager.RequestPath(transform.position, tMin.position, OnPathFound);
-                    if(Vector3.Distance(transform.position, tMin.transform.position) < 5 && !hasWeapon)
+                    if(Vector3.Distance(transform.position, tMin.transform.position) < 3 && !hasWeapon)
                     {
+                        StopCoroutine("FollowPath");
                         hasWeapon = true;
                         break;
                     }
@@ -90,12 +94,14 @@ public class Units : MonoBehaviour
             }
             while (hasWeapon)
             {
-                while (Vector3.Distance(transform.position, target.transform.position) < 10)
+                StartCoroutine(Shooting(target.transform.position));
+                while (Vector3.Distance(transform.position, target.transform.position) < 20)
                 {
-                    StopCoroutine("FollowPath");
+                    Debug.Log("Stoped");
+                    
                     break;
                 }
-                if(Vector3.Distance(transform.position, target.transform.position) > 10)
+                if(Vector3.Distance(transform.position, target.transform.position) > 20)
                 {
                     PathReqManager.RequestPath(transform.position, target.position, OnPathFound);
                     break;
@@ -193,7 +199,7 @@ public class Units : MonoBehaviour
             GetComponent<Animator>().enabled = false;
             Destroy(gameObject, 5);
             CancelInvoke("RunPath");
-            spwanPoint.enmeyCount--;
+            //spwanPoint.enmeyCount--;
         }
     }
     void Die()
@@ -210,6 +216,21 @@ public class Units : MonoBehaviour
         {
             rigidbody.isKinematic = state;
         }
+    }
+    IEnumerator Shooting(Vector3 Player)
+    {
+        m_SpawnTransform = this.gameObject.transform.GetChild(2);
+        Player.y = transform.position.y;
+        transform.LookAt(Player);
+        RaycastHit hit;
+        Vector3 shootDirection = transform.forward;
+        shootDirection.x += Random.Range(-5, 5);
+        shootDirection.y += Random.Range(-5, 5);
+        if (Physics.Raycast(transform.position, shootDirection, out hit, 10))
+        {
+            Instantiate(ball, m_SpawnTransform.position, m_SpawnTransform.rotation);
+        }
+        yield return null;
     }
     
 }

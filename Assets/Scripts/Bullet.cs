@@ -4,12 +4,25 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    private void Start()
+    
+     
+     public float m_Speed = 10f;  
+    public float m_Lifespan = 3f; 
+
+    
+    private Rigidbody m_Rigidbody;
+
+    
+    void Awake()
     {
-        Destroy(gameObject, 5);
+        m_Rigidbody = GetComponent<Rigidbody>();
     }
-    private void OnTriggerEnter(Collider other)
+
+    
+    void Start()
     {
-        Destroy(gameObject);
+        m_Rigidbody.AddForce(m_Rigidbody.transform.forward * m_Speed);
+        Destroy(gameObject, m_Lifespan);
     }
 }
+

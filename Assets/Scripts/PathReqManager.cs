@@ -48,7 +48,7 @@ public class PathReqManager : MonoBehaviour
 		TryProcessNext();
 	}
 
-	public void EndProcessingPath(bool end)
+	public void EndProcessingPath()
     {
 		isProcessingPath = false;
 	}
