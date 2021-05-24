@@ -27,6 +27,10 @@ public class SpwanPoints : MonoBehaviour
             enmeyCount += 1;
             Debug.Log(enmeyCount);
         }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            enmeyCount = 0;
+        }
         
 
     }
